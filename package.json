@@ -7,7 +7,7 @@
     "url": "https://github.com/CodeForChicago/SuperClass-frontend.git"
   },
   "scripts": {
-      "start": "node node_modules/gulp/bin/gulp serveprod"
+      "start": "node server.js"
   },
   "engines" : {
     "node": "0.12.2",
