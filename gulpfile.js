@@ -1,7 +1,6 @@
 'use strict';
 
 var gulp = require('gulp'),
-    connect = require('gulp-connect'),
     gulpFilter = require('gulp-filter'),
     flatten = require('gulp-flatten'),
     mainBowerFiles = require('main-bower-files'),
@@ -22,25 +21,27 @@ var gulp = require('gulp'),
     browserSync = require('browser-sync'),
     reload = browserSync.reload,
     p = {
-      jsx: './app/scripts/app.jsx',
-      scss: 'app/styles/main.scss',
-      scssSource: 'app/styles/*',
-      font: 'app/fonts/*',
+      jsx: './scripts/app.jsx',
+      scss: 'styles/main.scss',
+      scssSource: 'styles/*',
+      font: 'fonts/*',
+      htmlSource: 'html/*',
       bundle: 'app.js',
-      distJs: 'app/dist/js',
-      distCss: 'app/dist/css',
-      distFont: 'app/dist/fonts'
+      dist: 'dist',
+      distJs: 'dist/js',
+      distCss: 'dist/css',
+      distFont: 'dist/fonts',
     };
 
 gulp.task('clean', function(cb) {
-  del(['dist'], cb);
+  del([p.dist], cb);
 });
 
 gulp.task('browserSync', function() {
   browserSync({
     notify: false,
     server: {
-      baseDir: 'app/'
+      baseDir: 'dist/'
     }
   })
 });
@@ -86,6 +87,11 @@ gulp.task('styles', function() {
     .pipe(csso())
     .pipe(gulp.dest(p.distCss))
     .pipe(reload({stream: true}));
+});
+
+gulp.task('htmls', function() {
+  return gulp.src(p.htmlSource)
+    .pipe(gulp.dest(p.dist));
 });
 
 // Ugly hack to bring modernizr in
@@ -136,12 +142,12 @@ gulp.task('watchTask', function() {
 });
 
 gulp.task('watch', ['clean'], function() {
-  gulp.start(['libs', 'browserSync', 'watchTask', 'watchify', 'styles']);
+  gulp.start(['libs', 'styles', 'htmls', 'browserSync', 'watchTask', 'watchify']);
 });
 
 gulp.task('build', ['clean'], function() {
   process.env.NODE_ENV = 'production';
-  gulp.start(['libs', 'browserify', 'styles']);
+  gulp.start(['libs', 'browserify', 'styles', 'htmls']);
 });
 
 gulp.task('default', function() {
